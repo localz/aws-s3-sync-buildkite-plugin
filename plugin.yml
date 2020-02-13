@@ -1,0 +1,16 @@
+name: AWS S3 Sync
+description: A Buildkite plugin syncs files to the AWS Simple Storage Service (S3)
+author: https://github.com/localz
+requirements:
+  - aws
+configuration:
+  properties:
+    source:
+      type: string
+    destination:
+      type: string
+    acl:
+      type: string
+  required:
+    - source
+    - destination

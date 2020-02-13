@@ -1,0 +1,7 @@
+version: "3"
+services:
+  lint:
+    image: "buildkite/plugin-linter"
+    command: ["--id", "localz/aws-s3-sync"]
+    volumes:
+      - ".:/plugin:ro"

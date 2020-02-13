@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ ${BUILDKITE_COMMAND_EXIT_STATUS:-0} != '0' ]]; then
+  echo '--- Skipping S3 sync because the command failed'
+  exit 0
+fi
+
+if [[ -f "package.json" ]] ; then
+    VERSION="$(jq '.version' package.json | sed "s/\"//g")"
+else 
+    echo "package.json does not exist in root folder, exiting.."
+    exit 1
+fi
+
+ACL="${BUILDKITE_PLUGIN_AWS_S3_SYNC_ACL:-no-acl}"
+
+if [[ ${ACL} == "no-acl" ]] ; then
+  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}"
+  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}" --delete
+else
+  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION} with ACL ${ACL}"
+  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}" --acl "${ACL}" --delete
+fi
+
+if [[ ${ACL} == "no-acl" ]] ; then
+  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest"
+  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest" --delete
+else
+  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest with ACL ${ACL}"
+  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest" --acl "${ACL}" --delete
+fi
