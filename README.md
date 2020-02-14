@@ -3,12 +3,6 @@
 A [Buildkite plugin] that syncs files to S3.   
 When run it will sync the source folder to two folders at the destination - one named with the version number defined in the `package.json` file and the other named `latest`.
 
-### Path example
-`destination: s3://bucket_name/service_name/blue`   
-The above configuration would sync files to:
-`s3://bucket_name/service_name/blue/<VERSION_NUMBER>`   
-`s3://bucket_name/service_name/blue/latest`
-
 The `latest` folder is mapped to our green environment in CloudFront and the `version` folder gives us the ability to roll back a deployment quickly if needed.
 
 To use this plugin you MUST have a `package.json` file in the root of your repository.
@@ -24,6 +18,9 @@ steps:
           source: src/
           destination: s3://bucket_name/service_name/blue
 ```
+
+The above configuration would sync all files in the `src/` directory to:   
+`s3://bucket_name/service_name/blue/<VERSION_NUMBER>` and `s3://bucket_name/service_name/blue/latest`
 
 ## Configuration
 
