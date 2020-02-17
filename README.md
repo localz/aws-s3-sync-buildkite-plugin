@@ -7,7 +7,7 @@ The `latest` folder is mapped to our green environment in CloudFront and the `ve
 
 To use this plugin you MUST have a `package.json` file in the root of your repository.
 
-## Plugin configuration xample
+## Plugin configuration example
 
 ```yml
 steps:
