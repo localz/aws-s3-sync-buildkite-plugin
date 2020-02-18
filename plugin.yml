@@ -11,6 +11,8 @@ configuration:
       type: string
     acl:
       type: string
+    package_json:
+      type: string
   required:
     - source
     - destination

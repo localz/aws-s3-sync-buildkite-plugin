@@ -7,10 +7,12 @@ if [[ ${BUILDKITE_COMMAND_EXIT_STATUS:-0} != '0' ]]; then
   exit 0
 fi
 
-if [[ -f "package.json" ]] ; then
-    VERSION="$(jq '.version' package.json | sed "s/\"//g")"
+PACKAGE_JSON="${BUILDKITE_PLUGIN_AWS_S3_SYNC_PACKAGE_JSON:-package.json}"
+
+if [[ -f ${PACKAGE_JSON} ]] ; then
+    VERSION="$(jq '.version' "${PACKAGE_JSON}" | sed "s/\"//g")"
 else 
-    echo "package.json does not exist in root folder, exiting.."
+    echo "package.json does not exist at the specified path, exiting.."
     exit 1
 fi
 

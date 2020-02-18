@@ -33,4 +33,7 @@ The S3 URI describing where to sync the files to.
 ### `acl` (optional)
 The S3 ACL to apply to all synced files (ie. `public-read`)
 
+### `package_json` (optional)
+The relative to root path to `package.json` file if it isn't in the root dir (ie. `server/package.json`)
+
 [Buildkite plugin]: https://buildkite.com/docs/agent/v3/plugins
