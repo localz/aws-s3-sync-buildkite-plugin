@@ -14,7 +14,7 @@ steps:
   - label: "Generate files and push to S3"
     command: npm build
     plugins:
-      - localz/aws-s3-sync#v0.1.1:
+      - localz/aws-s3-sync#v0.1.2:
           source: src/
           destination: s3://bucket_name/service_name/blue
 ```
