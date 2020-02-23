@@ -13,6 +13,8 @@ configuration:
       type: string
     package_json:
       type: string
+    cache_control:
+      type: string
   required:
     - source
     - destination

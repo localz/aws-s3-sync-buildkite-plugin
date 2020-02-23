@@ -16,20 +16,25 @@ else
     exit 1
 fi
 
-ACL="${BUILDKITE_PLUGIN_AWS_S3_SYNC_ACL:-no-acl}"
+args=()
 
-if [[ ${ACL} == "no-acl" ]] ; then
-  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}"
-  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}" --delete
-else
-  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION} with ACL ${ACL}"
-  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}" --acl "${ACL}" --delete
+# By default delete files from destination that don't exist in source 
+args+=("--delete")
+
+# TODO support more ACLs
+if [[ ${BUILDKITE_PLUGIN_AWS_S3_SYNC_ACL} == "public-read" ]] ; then
+  args+=("--acl ${BUILDKITE_PLUGIN_AWS_S3_SYNC_ACL}")
 fi
 
-if [[ ${ACL} == "no-acl" ]] ; then
-  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest"
-  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest" --delete
-else
-  echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest with ACL ${ACL}"
-  aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest" --acl "${ACL}" --delete
+# Set object cache control to string provided
+if [[ -n ${BUILDKITE_PLUGIN_AWS_S3_SYNC_CACHE_CONTROL:-} ]] ; then
+  args+=("--cache-control ${BUILDKITE_PLUGIN_AWS_S3_SYNC_CACHE_CONTROL}")
 fi
+
+# Sync version number
+echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}"
+aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}" "${args[@]}"
+
+# Sync latest
+echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest"
+aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest" "${args[@]}"

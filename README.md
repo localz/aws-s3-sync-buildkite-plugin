@@ -14,13 +14,15 @@ steps:
   - label: "Generate files and push to S3"
     command: npm build
     plugins:
-      - localz/aws-s3-sync#v0.1.0:
+      - localz/aws-s3-sync#v0.1.1:
           source: src/
           destination: s3://bucket_name/service_name/blue
 ```
 
-The above configuration would sync all files in the `src/` directory to:   
+The above configuration would sync all files in the `src/` directory to:
 `s3://bucket_name/service_name/blue/<VERSION_NUMBER>` and `s3://bucket_name/service_name/blue/latest`
+
+Note: by default the process will delete all the files from destination that don't exist in source.
 
 ## Configuration
 
@@ -35,5 +37,8 @@ The S3 ACL to apply to all synced files (ie. `public-read`)
 
 ### `package_json` (optional)
 The relative to root path to `package.json` file if it isn't in the root dir (ie. `server/package.json`)
+
+### `cache_control` (optional)
+Specify caching behaviour for S3 objects (ie. `max-age=3600`)
 
 [Buildkite plugin]: https://buildkite.com/docs/agent/v3/plugins
