@@ -15,6 +15,8 @@ configuration:
       type: string
     cache_control:
       type: string
+    sub_directory:
+      type: string
   required:
     - source
     - destination
