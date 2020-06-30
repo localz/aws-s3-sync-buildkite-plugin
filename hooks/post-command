@@ -31,15 +31,23 @@ if [[ -n "${BUILDKITE_PLUGIN_AWS_S3_SYNC_CACHE_CONTROL:-}" ]] ; then
   args+=("--cache-control" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_CACHE_CONTROL}")
 fi
 
+# Set sub directory string
+if [[ -n "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SUB_DIRECTORY:-}" ]] ; then
+    SUB_DIRECTORY="/${BUILDKITE_PLUGIN_AWS_S3_SYNC_SUB_DIRECTORY}"
+else
+    SUB_DIRECTORY=""
+fi
+
+
 # Print all the arguments, with a space after, properly shell quoted
 echo -ne '--- Running: aws s3 sync ' >&2
 printf "%q " "${args[@]}"
 echo
 
 # Sync to version number path
-echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}"
-aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}" "${args[@]}"
+echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}${SUB_DIRECTORY}"
+aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/${VERSION}${SUB_DIRECTORY}" "${args[@]}"
 
 # Sync to latest path
-echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest"
-aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest" "${args[@]}"
+echo "--- :s3: Syncing ${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE} to ${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest${SUB_DIRECTORY}"
+aws s3 sync "${BUILDKITE_PLUGIN_AWS_S3_SYNC_SOURCE}" "${BUILDKITE_PLUGIN_AWS_S3_SYNC_DESTINATION}/latest${SUB_DIRECTORY}" "${args[@]}"
