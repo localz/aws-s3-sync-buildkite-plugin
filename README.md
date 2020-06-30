@@ -41,4 +41,7 @@ The relative to root path to `package.json` file if it isn't in the root dir (ie
 ### `cache_control` (optional)
 Specify caching behaviour for S3 objects (ie. `max-age=3600`)
 
+### `sub_directory` (optional)
+Specify a sub directory to deploy to (ie. `register`)
+
 [Buildkite plugin]: https://buildkite.com/docs/agent/v3/plugins
