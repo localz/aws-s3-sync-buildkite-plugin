@@ -1,4 +1,10 @@
 steps:
+
+  - label: ":hammer: Test"
+    plugins:
+      - docker-compose#v3.3.0:
+          run: tests
+
   - label: ":sparkles: Lint"
     plugins:
       - plugin-linter#v2.0.0:
